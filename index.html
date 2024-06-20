@@ -102,7 +102,7 @@ canvas {
 
     // Ajout d'une sphère pour représenter le globe
     var geometry = new THREE.SphereGeometry(2, 32, 32);
-    var material = new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load('https://threejs.org/examples/textures/planets/earth_lights_2048.png') });
+    var material = new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load('./earth_lights.png') });
     var globe = new THREE.Mesh(geometry, material);
     scene.add(globe);
 
