@@ -1,6 +1,9 @@
 // This file is required by the index.html file and will
 // be executed in the renderer process for that window.
 // All of the Node.js APIs are available in this process.
+// import "https://cdnjs.cloudflare.com/ajax/libs/three.js/r112/three.min.js";
+// import { OrbitControls } from "https://unpkg.com/three@0.112/examples/jsm/controls/OrbitControls.js";
+
 const audio = require('./audio-source')
 const coverArtAnimation = require('./animation.js');
 const electron = require('electron');
@@ -42,7 +45,10 @@ for (let i = 0; i<visualizers.length; i++) {
 }
 
 
-//3d earth code
+//3D earth code
+
+
+
       // Création de la scène
       var scene_1 = new THREE.Scene();
       var scene_2 = new THREE.Scene();
@@ -105,10 +111,95 @@ for (let i = 0; i<visualizers.length; i++) {
           }
       
       animateEarth();
+
+      //code for TRI
+// Create scene
+const scene_6 = new THREE.Scene();
+scene_6.background = new THREE.Color( 0x050505 );
+scene_6.fog = new THREE.Fog( 0x050505, 2000, 3500 );
+
+// Create camera
+const camera_6 = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+camera_6.position.z = 2750;
+
+// Create lights
+scene_6.add( new THREE.AmbientLight( 0x333333, 3 ) );
+const light1 = new THREE.DirectionalLight( 0xffffff, 1.5 );
+light1.position.set( 5, 5, 5 );
+scene_6.add(light1);
+const light2 = new THREE.DirectionalLight( 0xaaaaaa, 4.5 );
+light2.position.set( 0, -5, 0 );
+scene_6.add(light2);
+
+// Create render
+const renderer_6 = new THREE.WebGLRenderer({ canvas: document.querySelector('#tri')});
+renderer_6.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer_6.domElement);
+
+// Create geometry
+const triangles = 80;
+const geometry_6 = new THREE.BufferGeometry();
+const vertices = [];
+const positions = new Float32Array( triangles * 3 * 3 );
+
+for (let i = 0; i < triangles; i++) {
+    const x = Math.random() * 4 - 2;
+    const y = Math.random() * 4 - 2;
+    const z = Math.random() * 4 - 2;
+    vertices.push(x, y, z);
+}
+
+const colors = new Float32Array(vertices.length);
+for (let i = 0; i < colors.length; i += 3) {
+    colors[i] = Math.random();
+    colors[i + 1] = Math.random();
+    colors[i + 2] = Math.random();
+}
+
+geometry_6.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+
+geometry_6.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+
+const material = new THREE.MeshBasicMaterial({vertexColors: THREE.VertexColors, size: 5, specular: 0x000000, shininess: 250, transparent: true});
+
+// Create mesh
+const square = new THREE.Mesh(geometry_6, material);
+scene_6.add(square);
+
+const line = new THREE.Line(geometry_6, material );
+scene_6.add(line);
+
+// Set up camera position
+camera_6.position.z = 5;
+
+
+// Set up animation
+const animate = function () {
+	requestAnimationFrame(animate);
+
+	// Rotate square
+	square.rotation.x += 0.01;
+	square.rotation.y += 0.01;
+	line.rotation.x -= 0.01;
+	line.rotation.y -= 0.01;
+
+	// Update controls
+	
+
+	renderer_6.render(scene_6, camera_6);
+};
+
+// Handle window resize
+
+animate();
+
+
         document.getElementById("globe1").style.display='none';
         document.getElementById("globe2").style.display='none';
         document.getElementById("moon").style.display='none';
         document.getElementById("jupiter").style.display='none';
+        document.getElementById("tri").style.display='none';
+
 
 // Start the visible one
 animateVisualizer(selectedVisualizer);
@@ -197,6 +288,10 @@ electron.ipcRenderer.on('control', (event, message) => {
             stopVisualizer();
             document.getElementById("jupiter").style.display='block';
         break
+        case "CHANGE_TRI_3D_MODEL":
+            stopVisualizer();
+            document.getElementById("tri").style.display='block';
+            break
         case 'TOGGLE_PLAY':
             audioSource.toggle();
 		default:

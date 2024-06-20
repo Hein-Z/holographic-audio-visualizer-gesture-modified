@@ -52,9 +52,14 @@ server.get('/changeVis', function(req, res) {
     res.send("3d success-moon");
   }
   else if(changeVisCount == 7){
-    changeVisCount=0;
+    
     mainWindow.webContents.send("control", "CHANGE_JUPITER_3D_MODEL")
     res.send("3d success-jupiter");
+  }
+  else if(changeVisCount == 8){
+    changeVisCount=0;
+    mainWindow.webContents.send("control", "CHANGE_TRI_3D_MODEL")
+    res.send("3d success-tri");
   }
   else{
     mainWindow.webContents.send("control", "CHANGE_VISUALIZER")
