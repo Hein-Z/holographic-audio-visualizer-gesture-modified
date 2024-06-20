@@ -38,12 +38,25 @@ server.get('/toggleVis', function(req, res) {
 
 server.get('/changeVis', function(req, res) {
   changeVisCount++;
-  if(changeVisCount>=4){
+  if(changeVisCount == 4){
+    mainWindow.webContents.send("control", "CHANGE_EARTH1_3D_MODEL")
+  res.send("3d success-1");
+  }
+  else if(changeVisCount == 5){
+    mainWindow.webContents.send("control", "CHANGE_EARTH2_3D_MODEL")
+    res.send("3d success-2");
+  }
+  else if(changeVisCount == 6){
+    
+    mainWindow.webContents.send("control", "CHANGE_MOON_3D_MODEL")
+    res.send("3d success-moon");
+  }
+  else if(changeVisCount == 7){
     changeVisCount=0;
-    mainWindow.webContents.send("control", "CHANGE_CUSTOM_3D_MODEL")
-  res.send("3d success");
-
-  }else{
+    mainWindow.webContents.send("control", "CHANGE_JUPITER_3D_MODEL")
+    res.send("3d success-jupiter");
+  }
+  else{
     mainWindow.webContents.send("control", "CHANGE_VISUALIZER")
     res.send("visualizer success");
     
