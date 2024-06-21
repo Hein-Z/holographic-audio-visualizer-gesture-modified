@@ -344,6 +344,12 @@ electron.ipcRenderer.on('control', (event, message) => {
         case 'CHANGE_VISUALIZER':
             document.getElementById("globe1").style.display = 'none';
             document.getElementById("globe2").style.display = 'none';
+            document.getElementById("moon").style.display = 'none';
+            document.getElementById("jupiter").style.display = 'none';
+            document.getElementById("tri").style.display = 'none';
+            document.getElementById("line").style.display = 'none';
+            document.getElementById("dance").style.display = 'none';
+
             selectedVisualizer = (selectedVisualizer + 1) % visualizers.length
             animateVisualizer(selectedVisualizer);
             break;
