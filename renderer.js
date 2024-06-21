@@ -461,6 +461,8 @@ class Game {
         this.container;
         this.player = {};
         this.animations = {};
+        this.stats;
+        this.controls;
         this.camera;
         this.scene;
         this.renderer;
@@ -526,7 +528,7 @@ class Game {
         );
 
         mesh.rotation.x = -Math.PI / 2;
-        // mesh.position.y = -100;
+         mesh.position.y = -100;
         mesh.receiveShadow = true;
         this.scene.add(mesh);
 
@@ -567,6 +569,12 @@ class Game {
         this.renderer.shadowMap.enabled = true;
         this.container.appendChild(this.renderer.domElement);
 
+        this.controls = new THREE.OrbitControls(
+            this.camera,
+            this.renderer.domElement
+          );
+          this.controls.target.set(0, 100, 0);
+          this.controls.update();
 
     }
 
