@@ -13,7 +13,9 @@ const ParticleVisualizer = require('./particle-visualizer.js');
 const CubeVisualizer = require('./cube-visualizer.js');
 
 const playlist = 'stefandasbach/sets/lounge';
-
+let isDancer = false;
+const danceMoves = ["Idle", "Ymca Dance", "Locking Hip Hop Dance", "Hip Hop Dancing", "Pointing Gesture", "Chicken Dance"];
+let countUp = 0;
 let player = document.getElementById('player');
 player.volume = 1;
 
@@ -276,6 +278,7 @@ document.getElementById("moon").style.display = 'none';
 document.getElementById("jupiter").style.display = 'none';
 document.getElementById("tri").style.display = 'none';
 document.getElementById("line").style.display = 'none';
+document.getElementById('dance').style.display = 'none';
 
 // Start the visible one
 animateVisualizer(selectedVisualizer);
@@ -340,8 +343,21 @@ electron.ipcRenderer.on('control', (event, message) => {
             break;
         case 'TOGGLE_VISUALIZER_SETTING':
             visualizers[selectedVisualizer].toggle();
+            if (isDancer) {
+                console.log('im dance');
+                if (danceMoves.length-1 <= countUp) {
+                    countUp = 0;
+                } else {
+                    countUp += 1;
+
+                }
+                console.log(danceMoves.length);
+                console.log(countUp);
+                game.toggleAnimation(danceMoves[countUp]);
+            }
             break;
         case 'CHANGE_VISUALIZER':
+            isDancer = false;
             document.getElementById("globe1").style.display = 'none';
             document.getElementById("globe2").style.display = 'none';
             document.getElementById("moon").style.display = 'none';
@@ -349,33 +365,43 @@ electron.ipcRenderer.on('control', (event, message) => {
             document.getElementById("tri").style.display = 'none';
             document.getElementById("line").style.display = 'none';
             document.getElementById("dance").style.display = 'none';
-
             selectedVisualizer = (selectedVisualizer + 1) % visualizers.length
             animateVisualizer(selectedVisualizer);
             break;
         case 'CHANGE_EARTH1_3D_MODEL':
+            isDancer = false;
             stopVisualizer();
             document.getElementById("globe1").style.display = 'block';
             break;
         case 'CHANGE_EARTH2_3D_MODEL':
+            isDancer = false;
             stopVisualizer();
             document.getElementById("globe2").style.display = 'block';
             break
         case 'CHANGE_MOON_3D_MODEL':
+            isDancer = false;
             stopVisualizer();
             document.getElementById("moon").style.display = 'block';
             break
         case "CHANGE_JUPITER_3D_MODEL":
+            isDancer = false;
             stopVisualizer();
             document.getElementById("jupiter").style.display = 'block';
             break
         case "CHANGE_TRI_3D_MODEL":
+            isDancer = false;
             stopVisualizer();
             document.getElementById("tri").style.display = 'block';
             break
         case "CHANGE_LINE_3D_MODEL":
+            isDancer = false;
             stopVisualizer();
             document.getElementById("line").style.display = 'block';
+            break
+        case "CHANGE_DANCE_3D_MODEL":
+            isDancer = true;
+            stopVisualizer();
+            document.getElementById('dance').style.display = 'block';
             break
         case 'TOGGLE_PLAY':
             audioSource.toggle();
@@ -417,5 +443,200 @@ function stopVisualizer() {
     document.getElementById("jupiter").style.display = 'none';
     document.getElementById("tri").style.display = 'none';
     document.getElementById("line").style.display = 'none';
+    document.getElementById('dance').style.display = 'none';
 }
 
+// dance
+document.addEventListener("DOMContentLoaded", function () {
+    const game = new Game();
+    window.game = game; //For debugging only
+});
+
+class Game {
+    constructor() {
+        if (WEBGL.isWebGLAvailable() === false) {
+            document.body.appendChild(WEBGL.getWebGLErrorMessage());
+        }
+
+        this.container;
+        this.player = {};
+        this.animations = {};
+        this.camera;
+        this.scene;
+        this.renderer;
+
+        this.container = document.createElement("div");
+        this.container.style.height = "100%";
+        document.body.appendChild(this.container);
+
+        const game = this;
+        this.anims = [
+            "Pointing Gesture",
+            "Hip Hop Dancing",
+            "Chicken Dance",
+            "Locking Hip Hop Dance",
+            "Ymca Dance"
+        ];
+
+        this.assetsPath = "https://assets.codepen.io/91506/";
+
+        this.clock = new THREE.Clock();
+
+        this.init();
+
+        window.onError = function (error) {
+            console.error(JSON.stringify(error));
+        };
+    }
+
+    init() {
+        this.camera = new THREE.PerspectiveCamera(
+            45,
+            window.innerWidth / window.innerHeight,
+            1,
+            2000
+        );
+        this.camera.position.set(0, 200, 500);
+
+        this.scene = new THREE.Scene();
+//                    this.scene.background = new THREE.Color(0x000000);
+        const loader_bg2 = new THREE.TextureLoader();
+        const bgTexture2 = loader_bg2.load('./bg.jpg');
+        bgTexture2.colorSpace = THREE.SRGBColorSpace;
+        this.scene.background = bgTexture2;
+        this.scene.fog = new THREE.Fog(0x000000, 700, 1800);
+
+        let light = new THREE.HemisphereLight(0xffffff, 0x444444);
+        light.position.set(0, 200, 0);
+        this.scene.add(light);
+
+        light = new THREE.DirectionalLight(0xffffff);
+        light.position.set(0, 200, 100);
+        light.castShadow = true;
+        light.shadow.camera.top = 180;
+        light.shadow.camera.bottom = -100;
+        light.shadow.camera.left = -120;
+        light.shadow.camera.right = 120;
+        this.scene.add(light);
+
+        // ground
+        const mesh = new THREE.Mesh(
+            new THREE.PlaneBufferGeometry(4000, 4000),
+            new THREE.MeshPhongMaterial({color: 0x000000, depthWrite: false})
+        );
+
+        mesh.rotation.x = -Math.PI / 2;
+        // mesh.position.y = -100;
+        mesh.receiveShadow = true;
+        this.scene.add(mesh);
+
+        const grid = new THREE.GridHelper(4000, 40, 0xffffff, 0xdddddd);
+        //grid.position.y = -100;
+        grid.material.opacity = 0.2;
+        grid.material.transparent = true;
+        this.scene.add(grid);
+
+        // model
+        const loader = new THREE.FBXLoader();
+        const game = this;
+
+        loader.load(`${this.assetsPath}Knight.fbx`, function (object) {
+            object.mixer = new THREE.AnimationMixer(object);
+            game.player.mixer = object.mixer;
+            game.player.root = object.mixer.getRoot();
+
+            object.name = "Knight";
+
+            object.traverse(function (child) {
+                if (child.isMesh) {
+                    child.castShadow = true;
+                    child.receiveShadow = false;
+                }
+            });
+
+            game.scene.add(object);
+            game.player.object = object;
+            game.animations.Idle = object.animations[0];
+
+            game.loadNextAnim(loader);
+        });
+
+        this.renderer = new THREE.WebGLRenderer({canvas: document.querySelector('#dance')});
+        this.renderer.setPixelRatio(window.devicePixelRatio);
+        this.renderer.setSize(window.innerWidth, window.innerHeight);
+        this.renderer.shadowMap.enabled = true;
+        this.container.appendChild(this.renderer.domElement);
+
+
+    }
+
+    loadNextAnim(loader) {
+        let anim = this.anims.pop();
+        const game = this;
+        loader.load(`${this.assetsPath}${anim}.fbx`, function (object) {
+            game.animations[anim] = object.animations[0];
+            if (game.anims.length > 0) {
+                game.loadNextAnim(loader);
+            } else {
+                delete game.anims;
+                game.action = "Idle";
+                game.animate();
+            }
+        });
+    }
+
+
+    set action(name) {
+        const action = this.player.mixer.clipAction(this.animations[name]);
+        action.time = 0;
+        this.player.mixer.stopAllAction();
+        this.player.action = name;
+        this.player.actionTime = Date.now();
+        this.player.actionName = name;
+        action.fadeIn(0.5);
+        action.play();
+    }
+
+    get action() {
+        if (this.player === undefined || this.player.actionName === undefined)
+            return "";
+        return this.player.actionName;
+    }
+
+    toggleAnimation(animName) {
+        console.log(animName);
+        switch (animName) {
+            case "Idle":
+                game.action = animName;
+                break;
+            case "Chicken Dance":
+                game.action = animName;
+                break;
+            case "Pointing Gesture":
+                game.action = animName;
+                break;
+            case "Hip Hop Dancing":
+                game.action = animName;
+                break;
+            case "Locking Hip Hop Dance":
+                game.action = animName;
+                break;
+            case "Ymca Dance":
+                game.action = animName;
+                break;
+        }
+    }
+
+    animate() {
+        const game = this;
+        const dt = this.clock.getDelta();
+
+        requestAnimationFrame(function () {
+            game.animate();
+        });
+
+        if (this.player.mixer !== undefined) this.player.mixer.update(dt);
+
+        this.renderer.render(this.scene, this.camera);
+    }
+}

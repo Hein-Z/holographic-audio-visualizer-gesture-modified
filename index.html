@@ -7,6 +7,11 @@
         <!-- <script src='./three.min.js'></script>
         -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r112/three.min.js"></script>
+        <!--<script src="https://testinggrounds.info/share/threejs/three.min.js"></script>-->
+        <script src="https://testinggrounds.info/share/threejs/js/libs/inflate.min.js"></script>
+        <script src="https://testinggrounds.info/share/threejs/js/loaders/FBXLoader.js"></script>
+        <!--<script src="https://testinggrounds.info/share/threejs/js/controls/OrbitControls.js"></script>-->
+        <script src="https://testinggrounds.info/share/threejs/js/WebGL.js"></script>
         <script src="./main.js"></script>
         <!-- <script type="text/javascript" src="https://connect.soundcloud.com/sdk.js"></script> -->
         <style type="text/css">
@@ -58,6 +63,14 @@
                 margin-top: 10%;
             }
 
+            canvas#dance {
+
+                width: 100%;
+                height: 500px;
+                display: block;
+                margin: auto;
+                margin-top: -5%;
+            }
             body {
                 margin: 0;
 
@@ -91,7 +104,7 @@
 
                 background-image: url("./bg.jpg");
                 background-size: cover;
-                backdrop-filter:  brightness(50%);
+                backdrop-filter: brightness(50%);
             }
             ::selection {
                 background: white; /* WebKit/Blink Browsers */

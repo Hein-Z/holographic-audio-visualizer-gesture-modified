@@ -62,9 +62,13 @@ server.get('/changeVis', function(req, res) {
     res.send("3d success-tri");
   }
   else if(changeVisCount == 9){
-    changeVisCount=0;
     mainWindow.webContents.send("control", "CHANGE_LINE_3D_MODEL")
     res.send("3d success-line");
+  }
+  else if(changeVisCount >= 10){
+    changeVisCount= 0;
+    mainWindow.webContents.send("control", "CHANGE_DANCE_3D_MODEL")
+    res.send("3d success dance");
   }
   else{
     mainWindow.webContents.send("control", "CHANGE_VISUALIZER")
