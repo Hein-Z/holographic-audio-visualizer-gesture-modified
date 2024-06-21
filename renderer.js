@@ -160,13 +160,13 @@ geometry_6.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3
 
 geometry_6.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
 
-const material = new THREE.MeshBasicMaterial({vertexColors: THREE.VertexColors, size: 5, specular: 0x000000, shininess: 250, transparent: true});
+const material_6 = new THREE.MeshBasicMaterial({vertexColors: THREE.VertexColors, size: 5, specular: 0x000000, shininess: 250, transparent: true});
 
 // Create mesh
-const square = new THREE.Mesh(geometry_6, material);
+const square = new THREE.Mesh(geometry_6, material_6);
 scene_6.add(square);
 
-const line = new THREE.Line(geometry_6, material );
+const line = new THREE.Line(geometry_6, material_6 );
 scene_6.add(line);
 
 // Set up camera position
@@ -193,13 +193,71 @@ const animate = function () {
 
 animate();
 
+        // Initialize the scene, camera, and renderer with anti-aliasing
+const scene_7 = new THREE.Scene();
+const camera_7 = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 0.1, 1000);
+const renderer_7 = new THREE.WebGLRenderer({ canvas: document.querySelector('#line') });
+
+renderer_7.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer_7.domElement);
+
+// Add lighting
+const ambientLight = new THREE.AmbientLight(0xFFFFFF, 1);
+scene_7.add(ambientLight);
+const pointLight = new THREE.PointLight(0xFFFFFF, 1);
+pointLight.position.set(5, 5, 5);
+scene_7.add(pointLight);
+
+// Create geometry and material for the d20 dice
+const geometry_7 = new THREE.IcosahedronGeometry(1);
+const material_7 = new THREE.MeshStandardMaterial({ color: 0x000000, transparent: true, opacity: 0.8 });
+
+// Create the mesh and add it to the scene
+const d20 = new THREE.Mesh(geometry_7, material_7);
+scene_7.add(d20);
+
+// Create geometry for the edges
+const edges = new THREE.EdgesGeometry(geometry_7);
+
+// Create multiple lines to simulate thick edges
+const lines = [];
+for (let i = -2; i <= 2; i++) {
+    for (let j = -2; j <= 2; j++) {
+        if (i === 0 && j === 0) continue;
+        const edgeMaterial = new THREE.LineBasicMaterial({ color: 0xFFFFFF });
+        const edgeMesh = new THREE.LineSegments(edges, edgeMaterial);
+        edgeMesh.position.x = i * 0.005;
+        edgeMesh.position.y = j * 0.005;
+        scene_7.add(edgeMesh);
+        lines.push(edgeMesh);
+    }
+}
+
+camera_7.position.z = 5;
+
+// Animation loop for rotation
+function animateLine() {
+    requestAnimationFrame(animateLine);
+
+    d20.rotation.x += 0.01;
+    d20.rotation.y += 0.01;
+    lines.forEach(line => {
+        line.rotation.x += 0.01;
+        line.rotation.y += 0.01;
+    });
+
+    renderer_7.render(scene_7, camera_7);
+}
+
+animateLine();
+
 
         document.getElementById("globe1").style.display='none';
         document.getElementById("globe2").style.display='none';
         document.getElementById("moon").style.display='none';
         document.getElementById("jupiter").style.display='none';
         document.getElementById("tri").style.display='none';
-
+        document.getElementById("line").style.display='none';
 
 // Start the visible one
 animateVisualizer(selectedVisualizer);
@@ -292,6 +350,10 @@ electron.ipcRenderer.on('control', (event, message) => {
             stopVisualizer();
             document.getElementById("tri").style.display='block';
             break
+        case "CHANGE_LINE_3D_MODEL":
+            stopVisualizer();
+            document.getElementById("line").style.display='block';
+            break
         case 'TOGGLE_PLAY':
             audioSource.toggle();
 		default:
@@ -329,5 +391,7 @@ document.getElementById("globe2").style.display='none';
 document.getElementById("globe1").style.display='none';
 document.getElementById("moon").style.display='none';
 document.getElementById("jupiter").style.display='none';
+document.getElementById("tri").style.display='none';
+document.getElementById("line").style.display='none';
 }
 
