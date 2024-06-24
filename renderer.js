@@ -56,9 +56,9 @@ let scene_2 = new THREE.Scene();
 let scene_3 = new THREE.Scene();
 let scene_4 = new THREE.Scene();
 
-const loader_bg = new THREE.TextureLoader();
-const bgTexture = loader_bg.load('./bg.jpg');
-bgTexture.colorSpace = THREE.SRGBColorSpace;
+//const loader_bg = new THREE.TextureLoader();
+//const bgTexture = loader_bg.load('./bg.jpg');
+//bgTexture.colorSpace = THREE.SRGBColorSpace;
 
 
 // Création de la caméra
@@ -66,10 +66,16 @@ let camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHei
 camera.position.z = 5;
 
 // Création du rendu
-let renderer_1 = new THREE.WebGLRenderer({canvas: document.querySelector('#globe1')});
-let renderer_2 = new THREE.WebGLRenderer({canvas: document.querySelector('#globe2')});
-let renderer_3 = new THREE.WebGLRenderer({canvas: document.querySelector('#moon')});
-let renderer_4 = new THREE.WebGLRenderer({canvas: document.querySelector('#jupiter')});
+let renderer_1 = new THREE.WebGLRenderer({canvas: document.querySelector('#globe1'), alpha: true });
+let renderer_2 = new THREE.WebGLRenderer({canvas: document.querySelector('#globe2'), alpha: true });
+let renderer_3 = new THREE.WebGLRenderer({canvas: document.querySelector('#moon'), alpha: true });
+let renderer_4 = new THREE.WebGLRenderer({canvas: document.querySelector('#jupiter'), alpha: true });
+
+renderer_1.setClearColor(0xffffff, 0);
+renderer_2.setClearColor(0xffffff, 0);
+renderer_3.setClearColor(0xffffff, 0);
+renderer_4.setClearColor(0xffffff, 0);
+
 
 renderer_1.setSize(window.innerWidth, window.innerHeight);
 renderer_2.setSize(window.innerWidth, window.innerHeight);
@@ -111,10 +117,10 @@ function animateEarth() {
     scene_3.add(globe_3);
     scene_4.add(globe_4);
 
-    scene_1.background = bgTexture;
-    scene_2.background = bgTexture;
-    scene_3.background = bgTexture;
-    scene_4.background = bgTexture;
+//    scene_1.background = bgTexture;
+//    scene_2.background = bgTexture;
+//    scene_3.background = bgTexture;
+//    scene_4.background = bgTexture;
 
     renderer_1.render(scene_1, camera);
     renderer_2.render(scene_2, camera);
@@ -145,8 +151,11 @@ light2.position.set(0, -5, 0);
 scene_6.add(light2);
 
 // Create render
-const renderer_6 = new THREE.WebGLRenderer({canvas: document.querySelector('#tri')});
+const renderer_6 = new THREE.WebGLRenderer({canvas: document.querySelector('#tri'),alpha: true});
+
 renderer_6.setSize(window.innerWidth, window.innerHeight);
+renderer_6.setClearColor(0xffffff, 0);
+
 document.body.appendChild(renderer_6.domElement);
 
 // Create geometry
@@ -176,7 +185,7 @@ geometry_6.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
 const material_6 = new THREE.MeshBasicMaterial({
     vertexColors: THREE.VertexColors,
     size: 5,
-    specular: 0x000000,
+    specular: 0x00000000,
     shininess: 250,
     transparent: true
 });
@@ -215,9 +224,11 @@ animate();
 // Initialize the scene, camera, and renderer with anti-aliasing
 const scene_7 = new THREE.Scene();
 const camera_7 = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 0.1, 1000);
-const renderer_7 = new THREE.WebGLRenderer({canvas: document.querySelector('#line')});
+const renderer_7 = new THREE.WebGLRenderer({canvas: document.querySelector('#line'),alpha: true});
 
 renderer_7.setSize(window.innerWidth, window.innerHeight);
+renderer_7.setClearColor(0xffffff, 0);
+
 document.body.appendChild(renderer_7.domElement);
 
 // Add lighting
@@ -502,10 +513,10 @@ class Game {
 
         this.scene = new THREE.Scene();
 //                    this.scene.background = new THREE.Color(0x000000);
-        const loader_bg2 = new THREE.TextureLoader();
-        const bgTexture2 = loader_bg2.load('./bg.jpg');
-        bgTexture2.colorSpace = THREE.SRGBColorSpace;
-        this.scene.background = bgTexture2;
+//        const loader_bg2 = new THREE.TextureLoader();
+//        const bgTexture2 = loader_bg2.load('./bg.jpg');
+//        bgTexture2.colorSpace = THREE.SRGBColorSpace;
+//        this.scene.background = bgTexture2;
         this.scene.fog = new THREE.Fog(0x000000, 700, 1800);
 
         let light = new THREE.HemisphereLight(0xffffff, 0x444444);
@@ -563,9 +574,10 @@ class Game {
             game.loadNextAnim(loader);
         });
 
-        this.renderer = new THREE.WebGLRenderer({canvas: document.querySelector('#dance')});
+        this.renderer = new THREE.WebGLRenderer({canvas: document.querySelector('#dance'),alpha:true});
         this.renderer.setPixelRatio(window.devicePixelRatio);
         this.renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer_6.setClearColor(0xffffff, 0);
         this.renderer.shadowMap.enabled = true;
         this.container.appendChild(this.renderer.domElement);
 
