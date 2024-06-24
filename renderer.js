@@ -97,16 +97,15 @@ function animateEarth() {
     requestAnimationFrame(animateEarth);
     // Vérifier si le globe est défini avant de l'utiliser
 
-    globe_1.rotation.y += 0.01;
-    globe_2.rotation.y += 0.01;
-    globe_3.rotation.y += 0.01;
-    globe_4.rotation.y -= 0.01;
+    globe_1.rotation.y += player.volume*2/10;
+    globe_2.rotation.y += player.volume*2/10;
+    globe_3.rotation.y -= player.volume*2/10;
+    globe_4.rotation.y += player.volume*2/10;
 
-    globe_1.rotation.x += 0.005;
-    globe_2.rotation.x += 0.005;
-    globe_3.rotation.x += 0.01;
-    globe_4.rotation.x -= 0.01
-
+    globe_1.rotation.x += player.volume/10;
+    globe_2.rotation.x -= player.volume/10;
+    globe_3.rotation.x += player.volume/10;
+    globe_4.rotation.x += player.volume/10;
     scene_1.add(globe_1);
     scene_2.add(globe_2);
     scene_3.add(globe_3);
@@ -415,6 +414,7 @@ electron.ipcRenderer.on('volume', (event, message) => {
     const volume = Number(message);
     if (volume) {
         audioSource.setVolume(volume)
+
     }
 })
 
