@@ -97,15 +97,15 @@ function animateEarth() {
     requestAnimationFrame(animateEarth);
     // Vérifier si le globe est défini avant de l'utiliser
 
-    globe_1.rotation.y += player.volume*2/10;
-    globe_2.rotation.y += player.volume*2/10;
-    globe_3.rotation.y -= player.volume*2/10;
-    globe_4.rotation.y += player.volume*2/10;
+    globe_1.rotation.y += player.volume*2/20;
+    globe_2.rotation.y += player.volume*2/20;
+    globe_3.rotation.y -= player.volume*2/20;
+    globe_4.rotation.y += player.volume*2/20;
 
-    globe_1.rotation.x += player.volume/10;
-    globe_2.rotation.x -= player.volume/10;
-    globe_3.rotation.x += player.volume/10;
-    globe_4.rotation.x += player.volume/10;
+    globe_1.rotation.x += player.volume/20;
+    globe_2.rotation.x -= player.volume/20;
+    globe_3.rotation.x += player.volume/20;
+    globe_4.rotation.x += player.volume/20;
     scene_1.add(globe_1);
     scene_2.add(globe_2);
     scene_3.add(globe_3);
@@ -197,10 +197,10 @@ const animate = function () {
     requestAnimationFrame(animate);
 
     // Rotate square
-    square.rotation.x += 0.01;
-    square.rotation.y += 0.01;
-    line.rotation.x -= 0.01;
-    line.rotation.y -= 0.01;
+    square.rotation.x += player.volume/20;
+    square.rotation.y -= player.volume/20;
+    line.rotation.x -= player.volume/20;
+    line.rotation.y -= player.volume/20;
 
     // Update controls
 
@@ -258,11 +258,11 @@ camera_7.position.z = 5;
 function animateLine() {
     requestAnimationFrame(animateLine);
 
-    d20.rotation.x += 0.01;
-    d20.rotation.y += 0.01;
+    d20.rotation.x += player.volume/20;
+    d20.rotation.y += player.volume/20;
     lines.forEach(line => {
-        line.rotation.x += 0.01;
-        line.rotation.y += 0.01;
+        line.rotation.x += player.volume/20;
+        line.rotation.y += player.volume/20;
     });
 
     renderer_7.render(scene_7, camera_7);
